@@ -13,10 +13,10 @@ const ReleaseConfigForm = () => {
       <h2 className="text-lg font-medium mb-6">Configurações de Release</h2>
       
       <div className="mb-8">
-        <h3 className="form-field-label mb-3">Track de Publicação</h3>
+        <h3 className="font-medium mb-4 text-foreground">Track de Publicação</h3>
         
         <div className="space-y-3">
-          <div className="bg-card rounded-md p-4 border border-transparent hover:border-playstore-blue/50 transition-colors">
+          <div className="bg-card rounded-md p-4 border border-transparent hover:border-playstore-blue/30 transition-colors">
             <div className="flex items-center">
               <div className="flex items-center h-5">
                 <input
@@ -25,7 +25,7 @@ const ReleaseConfigForm = () => {
                   type="radio"
                   checked={trackType === 'internal'}
                   onChange={() => setTrackType('internal')}
-                  className="h-4 w-4 border-border text-playstore-blue focus:ring-playstore-blue"
+                  className="h-4 w-4 border-playstore-separator text-playstore-blue focus:ring-playstore-blue"
                 />
               </div>
               <div className="ml-3">
@@ -35,7 +35,7 @@ const ReleaseConfigForm = () => {
             </div>
           </div>
           
-          <div className="bg-card rounded-md p-4 border border-transparent hover:border-playstore-blue/50 transition-colors">
+          <div className="bg-card rounded-md p-4 border border-transparent hover:border-playstore-blue/30 transition-colors">
             <div className="flex items-center">
               <div className="flex items-center h-5">
                 <input
@@ -44,7 +44,7 @@ const ReleaseConfigForm = () => {
                   type="radio"
                   checked={trackType === 'closed'}
                   onChange={() => setTrackType('closed')}
-                  className="h-4 w-4 border-border text-playstore-blue focus:ring-playstore-blue"
+                  className="h-4 w-4 border-playstore-separator text-playstore-blue focus:ring-playstore-blue"
                 />
               </div>
               <div className="ml-3">
@@ -54,7 +54,7 @@ const ReleaseConfigForm = () => {
             </div>
           </div>
           
-          <div className="bg-card rounded-md p-4 border border-transparent hover:border-playstore-blue/50 transition-colors">
+          <div className="bg-card rounded-md p-4 border border-transparent hover:border-playstore-blue/30 transition-colors">
             <div className="flex items-center">
               <div className="flex items-center h-5">
                 <input
@@ -63,7 +63,7 @@ const ReleaseConfigForm = () => {
                   type="radio"
                   checked={trackType === 'open'}
                   onChange={() => setTrackType('open')}
-                  className="h-4 w-4 border-border text-playstore-blue focus:ring-playstore-blue"
+                  className="h-4 w-4 border-playstore-separator text-playstore-blue focus:ring-playstore-blue"
                 />
               </div>
               <div className="ml-3">
@@ -73,7 +73,7 @@ const ReleaseConfigForm = () => {
             </div>
           </div>
           
-          <div className="bg-card rounded-md p-4 border border-transparent hover:border-playstore-blue/50 transition-colors">
+          <div className="bg-card rounded-md p-4 border border-transparent hover:border-playstore-blue/30 transition-colors">
             <div className="flex items-center">
               <div className="flex items-center h-5">
                 <input
@@ -82,7 +82,7 @@ const ReleaseConfigForm = () => {
                   type="radio"
                   checked={trackType === 'production'}
                   onChange={() => setTrackType('production')}
-                  className="h-4 w-4 border-border text-playstore-blue focus:ring-playstore-blue"
+                  className="h-4 w-4 border-playstore-separator text-playstore-blue focus:ring-playstore-blue"
                 />
               </div>
               <div className="ml-3">
@@ -95,14 +95,14 @@ const ReleaseConfigForm = () => {
       </div>
       
       <div className="space-y-6 mb-8">
-        <div className="flex items-center">
+        <div className="flex items-center p-2 rounded-md hover:bg-card/60 transition-colors">
           <div className="flex items-center h-5">
             <input
               id="rollout"
               type="checkbox"
               checked={enableRollout}
               onChange={() => setEnableRollout(!enableRollout)}
-              className="h-4 w-4 rounded border-border text-playstore-blue focus:ring-playstore-blue"
+              className="h-4 w-4 rounded border-playstore-separator text-playstore-blue focus:ring-playstore-blue"
               disabled={trackType !== 'production'}
             />
           </div>
@@ -114,8 +114,8 @@ const ReleaseConfigForm = () => {
         
         {enableRollout && (
           <div className="ml-7 animate-fade-in">
-            <label className="form-field-label">Porcentagem de usuários</label>
-            <select className="form-field max-w-xs">
+            <label className="form-field-label mb-2 block">Porcentagem de usuários</label>
+            <select className="form-field max-w-xs bg-card border border-playstore-separator rounded-md p-2 text-foreground">
               <option value="0.1">0.1% dos usuários</option>
               <option value="1">1% dos usuários</option>
               <option value="5">5% dos usuários</option>
@@ -127,14 +127,14 @@ const ReleaseConfigForm = () => {
           </div>
         )}
         
-        <div className="flex items-center">
+        <div className="flex items-center p-2 rounded-md hover:bg-card/60 transition-colors">
           <div className="flex items-center h-5">
             <input
               id="schedule"
               type="checkbox"
               checked={scheduleRelease}
               onChange={() => setScheduleRelease(!scheduleRelease)}
-              className="h-4 w-4 rounded border-border text-playstore-blue focus:ring-playstore-blue"
+              className="h-4 w-4 rounded border-playstore-separator text-playstore-blue focus:ring-playstore-blue"
             />
           </div>
           <div className="ml-3">
@@ -144,24 +144,47 @@ const ReleaseConfigForm = () => {
         </div>
         
         {scheduleRelease && (
-          <div className="ml-7 animate-fade-in">
-            <label className="form-field-label">Data de publicação</label>
-            <div className="relative max-w-xs">
-              <input
-                type="date"
-                value={releaseDate}
-                onChange={(e) => setReleaseDate(e.target.value)}
-                className="form-field pl-10"
-                min={new Date().toISOString().split('T')[0]}
-              />
-              <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <div className="ml-7 space-y-4 animate-fade-in">
+            <div>
+              <label className="form-field-label mb-2 block">Data de publicação</label>
+              <div className="relative max-w-xs">
+                <input
+                  type="date"
+                  value={releaseDate}
+                  onChange={(e) => setReleaseDate(e.target.value)}
+                  className="form-field pl-10 bg-card border border-playstore-separator rounded-md p-2 text-foreground w-full"
+                  min={new Date().toISOString().split('T')[0]}
+                />
+                <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              </div>
+            </div>
+            
+            <div>
+              <label className="form-field-label mb-2 block">Hora</label>
+              <div className="flex items-center space-x-2 max-w-xs">
+                <select className="form-field bg-card border border-playstore-separator rounded-md p-2 text-foreground w-20">
+                  {Array.from({ length: 24 }, (_, i) => i).map(hour => (
+                    <option key={hour} value={hour.toString().padStart(2, '0')}>
+                      {hour.toString().padStart(2, '0')}
+                    </option>
+                  ))}
+                </select>
+                <span className="text-foreground">:</span>
+                <select className="form-field bg-card border border-playstore-separator rounded-md p-2 text-foreground w-20">
+                  {Array.from({ length: 60 }, (_, i) => i).map(minute => (
+                    <option key={minute} value={minute.toString().padStart(2, '0')}>
+                      {minute.toString().padStart(2, '0')}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
         )}
       </div>
       
-      <div className="pt-4 border-t border-border">
-        <button className="action-button-primary w-full">
+      <div className="pt-6 border-t border-playstore-separator">
+        <button className="bg-playstore-blue hover:bg-playstore-blue/80 text-white font-medium px-4 py-3 rounded-md transition-colors w-full">
           Publicar Aplicativo
         </button>
       </div>

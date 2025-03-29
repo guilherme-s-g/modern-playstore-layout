@@ -19,16 +19,18 @@ const FormField = ({
   children 
 }: FormFieldProps) => {
   return (
-    <div className="mb-4">
-      <label className="form-field-label">
+    <div className="mb-5">
+      <label className="form-field-label mb-2 text-sm font-medium text-foreground/90">
         {label} {required && <span className="text-destructive">*</span>}
       </label>
-      {children}
+      <div className="relative">
+        {children}
+      </div>
       
-      <div className="flex justify-between">
-        {hint && <p className="form-field-hint">{hint}</p>}
+      <div className="flex justify-between mt-1">
+        {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
         {maxLength && (
-          <p className="form-field-counter">
+          <p className="text-xs text-muted-foreground ml-auto">
             {currentLength}/{maxLength}
           </p>
         )}

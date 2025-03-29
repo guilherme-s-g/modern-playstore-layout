@@ -59,7 +59,7 @@ const Index = () => {
   };
   
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-screen overflow-hidden bg-playstore-dark">
       <Sidebar 
         activeSection={activeSection === 'new-app' ? activeTab : activeSection}
         onSectionChange={handleSectionChange}
@@ -67,15 +67,15 @@ const Index = () => {
         onToggleDarkMode={handleToggleDarkMode}
       />
       
-      <div className="flex-1 overflow-auto p-6">
+      <div className="flex-1 overflow-auto p-4">
         <header className="mb-6">
-          <h1 className="text-2xl font-bold">
+          <h1 className="text-2xl font-bold text-foreground">
             {activeSection === 'new-app' ? 'Novo Aplicativo' : 
              activeSection === 'history' ? 'Histórico de Publicações' :
              activeSection === 'settings' ? 'Configurações' : 
              activeSection === 'dashboard' ? 'Dashboard' : 'Atualização de Aplicativo'}
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             {activeSection === 'new-app' ? 'Preencha os detalhes para publicar seu aplicativo na Google Play Store' : 
              activeSection === 'history' ? 'Visualize e gerencie suas publicações anteriores' :
              activeSection === 'settings' ? 'Configure as opções do sistema' : 
@@ -84,8 +84,8 @@ const Index = () => {
         </header>
         
         {activeSection === 'new-app' && (
-          <div className="bg-card rounded-lg shadow-sm border border-border">
-            <div className="px-6 pt-6">
+          <div className="bg-playstore-darker rounded-lg shadow-sm border border-playstore-separator">
+            <div className="px-4 pt-4">
               <TabNavigation 
                 tabs={tabs} 
                 activeTab={activeTab} 
@@ -96,22 +96,39 @@ const Index = () => {
               />
             </div>
             
-            <div className="px-6 pb-6">
+            <div className="px-6 py-6">
               {renderActiveForm()}
             </div>
           </div>
         )}
         
         {activeSection === 'dashboard' && (
-          <div className="bg-card rounded-lg shadow-sm border border-border p-6">
-            <p className="text-center text-muted-foreground py-10">
-              Esta é a tela de Dashboard. Aqui serão exibidas estatísticas e informações sobre seus aplicativos.
-            </p>
+          <div className="bg-playstore-darker rounded-lg shadow-sm border border-playstore-separator p-6">
+            <div className="flex flex-col items-center justify-center py-20">
+              <h2 className="text-xl font-semibold mb-4">Bem-vindo à Automação Play Store</h2>
+              <p className="text-muted-foreground text-center max-w-md mb-8">
+                Selecione uma opção no menu lateral para começar a gerenciar seus aplicativos na Google Play Store.
+              </p>
+              <div className="grid grid-cols-2 gap-4 w-full max-w-lg">
+                <button 
+                  className="bg-playstore-blue text-white p-4 rounded-lg shadow-sm hover:bg-playstore-blue/80 transition-colors"
+                  onClick={() => handleSectionChange('new-app')}
+                >
+                  Novo Aplicativo
+                </button>
+                <button 
+                  className="bg-playstore-blue text-white p-4 rounded-lg shadow-sm hover:bg-playstore-blue/80 transition-colors"
+                  onClick={() => handleSectionChange('history')}
+                >
+                  Histórico
+                </button>
+              </div>
+            </div>
           </div>
         )}
         
         {activeSection === 'history' && (
-          <div className="bg-card rounded-lg shadow-sm border border-border p-6">
+          <div className="bg-playstore-darker rounded-lg shadow-sm border border-playstore-separator p-6">
             <p className="text-center text-muted-foreground py-10">
               Esta é a tela de Histórico. Aqui será exibido o histórico de publicações de seus aplicativos.
             </p>
@@ -119,7 +136,7 @@ const Index = () => {
         )}
         
         {activeSection === 'settings' && (
-          <div className="bg-card rounded-lg shadow-sm border border-border p-6">
+          <div className="bg-playstore-darker rounded-lg shadow-sm border border-playstore-separator p-6">
             <p className="text-center text-muted-foreground py-10">
               Esta é a tela de Configurações. Aqui você poderá configurar os parâmetros do sistema.
             </p>

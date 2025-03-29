@@ -8,41 +8,48 @@
     --background: 0 0% 12%;
     --foreground: 0 0% 98%;
 
-    --card: 0 0% 14%;
+    --card: 0 0% 16%;
     --card-foreground: 0 0% 98%;
 
-    --popover: 0 0% 14%;
+    --popover: 0 0% 16%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 210 100% 42%;
+    --primary: 210 100% 50%;
     --primary-foreground: 0 0% 98%;
 
-    --secondary: 120 77% 42%;
+    --secondary: 210 100% 50%;
     --secondary-foreground: 0 0% 98%;
 
     --muted: 0 0% 24%;
-    --muted-foreground: 0 0% 78%;
+    --muted-foreground: 0 0% 70%;
 
-    --accent: 210 100% 42%;
+    --accent: 210 100% 50%;
     --accent-foreground: 0 0% 98%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
     --border: 0 0% 28%;
-    --input: 0 0% 24%;
-    --ring: 210 100% 42%;
+    --input: 0 0% 18%;
+    --ring: 210 100% 50%;
 
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 15%;
     --sidebar-foreground: 0 0% 90%;
-    --sidebar-primary: 210 100% 42%;
+    --sidebar-primary: 210 100% 50%;
     --sidebar-primary-foreground: 0 0% 98%;
     --sidebar-accent: 0 0% 18%;
     --sidebar-accent-foreground: 0 0% 90%;
     --sidebar-border: 0 0% 28%;
-    --sidebar-ring: 210 100% 42%;
+    --sidebar-ring: 210 100% 50%;
+
+    /* Cores específicas do Play Store Publisher */
+    --playstore-dark: 0 0% 12%;
+    --playstore-darker: 0 0% 14%;
+    --playstore-field: 0 0% 18%;
+    --playstore-blue: 210 100% 50%;
+    --playstore-separator: 0 0% 20%;
   }
 }
 
@@ -56,11 +63,11 @@
   }
   
   .form-field {
-    @apply bg-playstore-field rounded-md border border-border p-2 text-sm text-foreground w-full focus:outline-none focus:ring-2 focus:ring-playstore-blue transition-all;
+    @apply bg-playstore-field rounded-md border border-border p-2.5 text-sm text-foreground w-full focus:outline-none focus:ring-1 focus:ring-playstore-blue transition-all;
   }
   
   .form-field-label {
-    @apply block text-sm font-medium text-muted-foreground mb-1;
+    @apply block text-sm font-medium text-foreground mb-1;
   }
   
   .form-field-counter {
@@ -76,15 +83,15 @@
   }
   
   .sidebar-nav-button.active {
-    @apply bg-playstore-blue/20 font-medium;
+    @apply bg-playstore-blue text-white font-medium;
   }
   
   .tab-button {
-    @apply px-4 py-2 rounded-t-md font-medium transition-colors;
+    @apply px-4 py-2.5 rounded-t-md font-medium transition-colors;
   }
   
   .tab-button.active {
-    @apply bg-card text-foreground;
+    @apply bg-card text-foreground border-t border-l border-r border-playstore-separator;
   }
   
   .tab-button:not(.active) {
@@ -92,14 +99,24 @@
   }
   
   .action-button-primary {
-    @apply bg-playstore-blue hover:bg-playstore-blue/80 text-white font-medium px-4 py-2 rounded-md transition-colors;
+    @apply bg-playstore-blue hover:bg-playstore-blue/80 text-white font-medium px-4 py-2.5 rounded-md transition-colors;
   }
   
   .action-button-secondary {
-    @apply bg-muted hover:bg-muted/80 text-foreground font-medium px-4 py-2 rounded-md transition-colors;
+    @apply bg-muted hover:bg-muted/80 text-foreground font-medium px-4 py-2.5 rounded-md transition-colors;
   }
   
   .file-select-button {
-    @apply bg-playstore-blue hover:bg-playstore-blue/80 text-white font-medium px-4 py-2 rounded-md transition-colors;
+    @apply bg-playstore-blue hover:bg-playstore-blue/80 text-white font-medium px-4 py-2.5 rounded-md transition-colors;
   }
+}
+
+/* Animações para as transições */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
 }

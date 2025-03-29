@@ -15,21 +15,21 @@ interface TabNavigationProps {
 
 const TabNavigation = ({ tabs, activeTab, onTabChange }: TabNavigationProps) => {
   return (
-    <div className="border-b border-border mb-6">
-      <div className="flex space-x-1">
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            className={cn(
-              "tab-button",
-              activeTab === tab.id ? "active" : ""
-            )}
-            onClick={() => onTabChange(tab.id)}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
+    <div className="flex space-x-1 mb-6 rounded-t-lg bg-playstore-darker overflow-hidden border-b border-playstore-separator">
+      {tabs.map((tab) => (
+        <button
+          key={tab.id}
+          className={cn(
+            "py-3 px-6 font-medium transition-colors rounded-t-lg",
+            activeTab === tab.id 
+              ? "bg-card text-foreground border-t border-l border-r border-playstore-separator"
+              : "text-muted-foreground hover:text-foreground hover:bg-playstore-darker/80"
+          )}
+          onClick={() => onTabChange(tab.id)}
+        >
+          {tab.label}
+        </button>
+      ))}
     </div>
   );
 };
