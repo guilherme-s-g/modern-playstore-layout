@@ -19,18 +19,18 @@ const FormField = ({
   children 
 }: FormFieldProps) => {
   return (
-    <div className="mb-5">
-      <label className="form-field-label mb-2 text-sm font-medium text-foreground/90">
-        {label} {required && <span className="text-destructive">*</span>}
+    <div className="mb-5 animate-fade-in">
+      <label className="form-field-label mb-2 text-sm font-medium text-foreground/95">
+        {label} {required && <span className="text-[#FF5252]">*</span>}
       </label>
       <div className="relative">
         {children}
       </div>
       
-      <div className="flex justify-between mt-1">
-        {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
+      <div className="flex justify-between mt-1.5">
+        {hint && <p className="text-xs text-foreground/60">{hint}</p>}
         {maxLength && (
-          <p className="text-xs text-muted-foreground ml-auto">
+          <p className={`text-xs ${currentLength > maxLength ? 'text-[#FF5252]' : 'text-foreground/60'} ml-auto`}>
             {currentLength}/{maxLength}
           </p>
         )}

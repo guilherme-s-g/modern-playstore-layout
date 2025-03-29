@@ -9,8 +9,10 @@ import {
   Sun, 
   FileEdit,
   Image,
-  CloudUpload
+  CloudUpload,
+  RefreshCw
 } from 'lucide-react';
+import { Switch } from "@/components/ui/switch";
 import { cn } from '@/lib/utils';
 
 interface SidebarProps {
@@ -62,7 +64,7 @@ const Sidebar = ({
     },
     {
       id: 'images',
-      label: 'Imagens',
+      label: 'Imagens e Assets',
       icon: <Image className="w-5 h-5" />
     },
     {
@@ -71,75 +73,74 @@ const Sidebar = ({
       icon: <Settings className="w-5 h-5" />
     }
   ];
+
+  const [updateMode, setUpdateMode] = React.useState(false);
   
   return (
-    <div className="bg-playstore-darker text-sidebar-foreground w-64 h-screen flex flex-col">
-      <div className="p-4 border-b border-playstore-separator">
-        <h1 className="text-xl font-bold text-center">Automação Play Store</h1>
+    <div className="bg-[#222222] text-sidebar-foreground w-64 h-screen flex flex-col shadow-lg">
+      <div className="p-5 border-b border-playstore-separator">
+        <h1 className="text-xl font-bold text-center text-white">Atualização de Aplicativo</h1>
       </div>
       
-      <div className="p-3 flex-1 overflow-y-auto">
-        <nav className="space-y-1 mb-6">
-          {sidebarItems.map((item) => (
-            <button
-              key={item.id}
-              className={cn(
-                "w-full px-3 py-2.5 rounded-md flex items-center space-x-3 transition-colors",
-                activeSection === item.id 
-                  ? "bg-playstore-blue text-white font-medium" 
-                  : "hover:bg-playstore-blue/10 text-sidebar-foreground"
-              )}
-              onClick={() => onSectionChange(item.id)}
-            >
-              {item.icon}
-              <span>{item.label}</span>
-            </button>
-          ))}
-        </nav>
-        
-        {activeSection === 'new-app' && (
-          <>
-            <div className="border-t border-playstore-separator my-4"></div>
-            <h2 className="text-xs uppercase text-muted-foreground font-semibold mb-2 px-3">
-              Seções do Formulário
-            </h2>
-            <nav className="space-y-1">
-              {newAppSections.map((item) => (
-                <button
-                  key={item.id}
-                  className={cn(
-                    "w-full px-3 py-2 rounded-md flex items-center space-x-3 transition-colors",
-                    activeSection === item.id 
-                      ? "bg-playstore-blue/20 font-medium text-foreground" 
-                      : "hover:bg-playstore-blue/10 text-sidebar-foreground"
-                  )}
-                  onClick={() => onSectionChange(item.id)}
-                >
-                  {item.icon}
-                  <span>{item.label}</span>
-                </button>
-              ))}
-            </nav>
-          </>
+      <div className="flex-1 overflow-y-auto py-3">
+        {(activeSection === 'new-app' || activeSection === 'basic-info' || 
+         activeSection === 'files-credentials' || activeSection === 'images' || 
+         activeSection === 'release-config') && (
+          <div className="space-y-2 px-4">
+            {newAppSections.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => onSectionChange(item.id)}
+                className={cn(
+                  "w-full p-3 rounded-md flex items-center justify-center space-x-3 transition-all duration-200",
+                  activeSection === item.id 
+                    ? "bg-[#0D6EFD] text-white font-medium" 
+                    : "bg-[#1E5CA2]/80 hover:bg-[#0D6EFD]/90 text-white/90"
+                )}
+              >
+                {item.icon}
+                <span className="text-sm font-medium">{item.label}</span>
+              </button>
+            ))}
+          </div>
         )}
       </div>
       
-      <div className="p-3 border-t border-playstore-separator">
-        <div className="flex items-center">
-          <div className="flex-1">
-            <span className="text-sm text-muted-foreground">Tema</span>
+      <div className="p-4 space-y-4 border-t border-playstore-separator">
+        {/* Tema escuro toggle */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            {darkMode ? <Moon className="w-5 h-5 text-white/70" /> : <Sun className="w-5 h-5 text-white/70" />}
+            <span className="text-sm text-white/80">Tema Escuro</span>
           </div>
-          <button
-            className="p-2 rounded-md hover:bg-playstore-blue/10 transition-colors"
-            onClick={onToggleDarkMode}
-          >
-            {darkMode ? (
-              <Sun className="w-5 h-5" />
-            ) : (
-              <Moon className="w-5 h-5" />
-            )}
-          </button>
+          <Switch 
+            checked={darkMode} 
+            onCheckedChange={onToggleDarkMode} 
+            className="data-[state=checked]:bg-[#0D6EFD]"
+          />
         </div>
+
+        {/* Modo Atualização toggle */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <RefreshCw className="w-5 h-5 text-white/70" />
+            <span className="text-sm text-white/80">Modo Atualização</span>
+          </div>
+          <Switch 
+            checked={updateMode} 
+            onCheckedChange={() => setUpdateMode(!updateMode)} 
+            className="data-[state=checked]:bg-[#0D6EFD]"
+          />
+        </div>
+        
+        {/* Botão de histórico */}
+        <button
+          onClick={() => onSectionChange('history')}
+          className="w-full p-3 mt-2 rounded-md flex items-center justify-center space-x-3 bg-[#1E5CA2]/80 hover:bg-[#0D6EFD]/90 text-white transition-all duration-200"
+        >
+          <History className="w-5 h-5" />
+          <span className="text-sm font-medium">Histórico de Publicações</span>
+        </button>
       </div>
     </div>
   );

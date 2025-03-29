@@ -14,16 +14,16 @@
     --popover: 0 0% 16%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 210 100% 50%;
+    --primary: 216 100% 52%;
     --primary-foreground: 0 0% 98%;
 
-    --secondary: 210 100% 50%;
+    --secondary: 216 100% 52%;
     --secondary-foreground: 0 0% 98%;
 
     --muted: 0 0% 24%;
     --muted-foreground: 0 0% 70%;
 
-    --accent: 210 100% 50%;
+    --accent: 216 100% 52%;
     --accent-foreground: 0 0% 98%;
 
     --destructive: 0 84.2% 60.2%;
@@ -31,24 +31,24 @@
 
     --border: 0 0% 28%;
     --input: 0 0% 18%;
-    --ring: 210 100% 50%;
+    --ring: 216 100% 52%;
 
     --radius: 0.5rem;
 
-    --sidebar-background: 0 0% 15%;
+    --sidebar-background: 0 0% 13%;
     --sidebar-foreground: 0 0% 90%;
-    --sidebar-primary: 210 100% 50%;
+    --sidebar-primary: 216 100% 52%;
     --sidebar-primary-foreground: 0 0% 98%;
     --sidebar-accent: 0 0% 18%;
     --sidebar-accent-foreground: 0 0% 90%;
     --sidebar-border: 0 0% 28%;
-    --sidebar-ring: 210 100% 50%;
+    --sidebar-ring: 216 100% 52%;
 
     /* Cores específicas do Play Store Publisher */
     --playstore-dark: 0 0% 12%;
     --playstore-darker: 0 0% 14%;
     --playstore-field: 0 0% 18%;
-    --playstore-blue: 210 100% 50%;
+    --playstore-blue: 216 100% 52%;
     --playstore-separator: 0 0% 20%;
   }
 }
@@ -59,7 +59,7 @@
   }
 
   body {
-    @apply bg-playstore-dark text-foreground;
+    @apply bg-[#222222] text-foreground;
   }
   
   .form-field {
@@ -99,7 +99,7 @@
   }
   
   .action-button-primary {
-    @apply bg-playstore-blue hover:bg-playstore-blue/80 text-white font-medium px-4 py-2.5 rounded-md transition-colors;
+    @apply bg-[#0D6EFD] hover:bg-[#0D6EFD]/80 text-white font-medium px-4 py-2.5 rounded-md transition-colors;
   }
   
   .action-button-secondary {
@@ -107,7 +107,7 @@
   }
   
   .file-select-button {
-    @apply bg-playstore-blue hover:bg-playstore-blue/80 text-white font-medium px-4 py-2.5 rounded-md transition-colors;
+    @apply bg-[#0D6EFD] hover:bg-[#0D6EFD]/80 text-white font-medium px-4 py-2.5 rounded-md transition-colors;
   }
 }
 
@@ -117,6 +117,15 @@
   to { opacity: 1; }
 }
 
+@keyframes slideIn {
+  from { transform: translateY(10px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
 .animate-fade-in {
   animation: fadeIn 0.3s ease-out;
+}
+
+.animate-slide-in {
+  animation: slideIn 0.3s ease-out;
 }
