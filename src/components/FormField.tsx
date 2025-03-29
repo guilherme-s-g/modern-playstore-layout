@@ -20,8 +20,8 @@ const FormField = ({
 }: FormFieldProps) => {
   return (
     <div className="mb-5 animate-fade-in">
-      <label className="form-field-label mb-2 text-sm font-medium text-foreground/95">
-        {label} {required && <span className="text-[#FF5252]">*</span>}
+      <label className="form-field-label mb-2 text-sm font-medium text-foreground/95 flex items-center">
+        {label} {required && <span className="text-[#FF5252] ml-1">*</span>}
       </label>
       <div className="relative">
         {children}
