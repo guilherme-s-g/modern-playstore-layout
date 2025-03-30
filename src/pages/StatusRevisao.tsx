@@ -13,11 +13,18 @@ import {
   ChevronRight,
   BarChart4,
   AlertTriangle,
-  CheckCircle2
+  CheckCircle2,
+  Play,
+  Square,
+  RotateCw,
+  ArrowUp
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Progress } from '@/components/ui/progress';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import FormField from '@/components/FormField';
 
 const StatusCard = ({ title, icon, status, description, progress }: { 
   title: string; 
@@ -82,7 +89,18 @@ const StatusRevisao = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [selectedApp, setSelectedApp] = useState('MeuApp - v2.1.0');
+  const [packageName, setPackageName] = useState('com.exemplo.app');
+  const [track, setTrack] = useState('production');
+  const [statusAtual, setStatusAtual] = useState('Aguardando...');
+  const [monitoring, setMonitoring] = useState(false);
+  
+  // Dados simulados
+  const [appData, setAppData] = useState({
+    trackInfo: 'production',
+    version: '2.1.0',
+    versionName: 'Release 2.1.0',
+    lastUpdate: '22/05/2023 15:32'
+  });
   
   // Simular carregamento
   useEffect(() => {
@@ -93,17 +111,35 @@ const StatusRevisao = () => {
     return () => clearTimeout(timer);
   }, []);
   
-  const handleRefresh = () => {
+  const handleVerifyStatus = () => {
     setRefreshing(true);
     
-    // Simular atualização
+    // Simular verificação
     setTimeout(() => {
       setRefreshing(false);
+      setStatusAtual('Em revisão - Fase 2/4');
+      
       toast({
         title: "Status atualizado",
-        description: "Os dados de revisão foram atualizados com sucesso.",
+        description: "As informações de revisão foram atualizadas com sucesso.",
       });
     }, 2000);
+  };
+  
+  const handleStartMonitoring = () => {
+    setMonitoring(true);
+    toast({
+      title: "Monitoramento iniciado",
+      description: "Você será notificado sobre mudanças no status de revisão.",
+    });
+  };
+  
+  const handleStopMonitoring = () => {
+    setMonitoring(false);
+    toast({
+      title: "Monitoramento interrompido",
+      description: "O monitoramento automático foi desativado.",
+    });
   };
   
   return (
@@ -121,23 +157,13 @@ const StatusRevisao = () => {
             </Button>
             <div>
               <h1 className="text-2xl font-bold text-white flex items-center">
-                <Clipboard className="mr-2" /> Status da Revisão
+                <Clipboard className="mr-2" /> Monitor de Status de Revisão
               </h1>
               <p className="text-muted-foreground text-sm">
-                Acompanhe o progresso da revisão do seu aplicativo
+                Acompanhe o progresso da revisão do seu aplicativo na Google Play
               </p>
             </div>
           </div>
-          
-          <Button 
-            variant="outline" 
-            className="gap-2"
-            onClick={handleRefresh}
-            disabled={refreshing}
-          >
-            <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
-            Atualizar
-          </Button>
         </div>
         
         {loading ? (
@@ -147,110 +173,99 @@ const StatusRevisao = () => {
             <div className="h-4 w-48 bg-[#333333] rounded"></div>
           </div>
         ) : (
-          <>
-            <div className="bg-[#2A2A2A] rounded-lg shadow-lg border border-playstore-separator p-6 animate-fade-in mb-6">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0 h-14 w-14 bg-gray-700 rounded-xl mr-4 flex items-center justify-center">
-                    <img 
-                      src="/public/lovable-uploads/2aa8c895-c062-47d4-8ec2-4a79b5556a5c.png" 
-                      alt="App Icon" 
-                      className="h-10 w-10 rounded-lg"
-                    />
-                  </div>
-                  <div>
-                    <h2 className="text-lg font-semibold text-white">{selectedApp}</h2>
-                    <div className="flex items-center mt-1">
-                      <span className="bg-yellow-500/20 text-yellow-400 text-xs px-2 py-0.5 rounded-full flex items-center">
-                        <Clock size={12} className="mr-1" />
-                        Em Revisão
-                      </span>
-                      <span className="text-xs text-muted-foreground ml-3">
-                        Enviado em 22/05/2023
-                      </span>
-                    </div>
-                  </div>
-                </div>
+          <div className="bg-[#2A2A2A] rounded-lg shadow-lg border border-playstore-separator p-6 animate-fade-in">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div>
+                <FormField 
+                  label="Package Name" 
+                  required={true}
+                  className="mb-4"
+                >
+                  <Input 
+                    value={packageName}
+                    onChange={(e) => setPackageName(e.target.value)}
+                    placeholder="ex: com.exemplo.app"
+                    className="bg-[#333333] border-playstore-separator"
+                  />
+                </FormField>
                 
-                <div className="flex items-center">
-                  <select 
-                    className="bg-[#333333] text-sm border border-playstore-separator rounded-md px-3 py-1.5 text-white"
-                    value={selectedApp}
-                    onChange={(e) => setSelectedApp(e.target.value)}
+                <FormField 
+                  label="Faixa" 
+                  required={true}
+                >
+                  <Select 
+                    value={track} 
+                    onValueChange={setTrack}
                   >
-                    <option value="MeuApp - v2.1.0">MeuApp - v2.1.0</option>
-                    <option value="MeuApp - v2.0.5">MeuApp - v2.0.5</option>
-                    <option value="App Secundário - v1.3.2">App Secundário - v1.3.2</option>
-                  </select>
-                </div>
+                    <SelectTrigger className="bg-[#333333] border-playstore-separator">
+                      <SelectValue placeholder="Selecione a faixa" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="internal">Internal Testing</SelectItem>
+                      <SelectItem value="alpha">Closed Testing (Alpha)</SelectItem>
+                      <SelectItem value="beta">Open Testing (Beta)</SelectItem>
+                      <SelectItem value="production">Production</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </FormField>
+                
+                <Button 
+                  className="mt-6 w-full md:w-auto bg-[#0D6EFD] hover:bg-[#0D6EFD]/80"
+                  onClick={handleVerifyStatus}
+                  disabled={refreshing}
+                >
+                  {refreshing ? (
+                    <>
+                      <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                      Verificando...
+                    </>
+                  ) : (
+                    <>
+                      <RefreshCw className="mr-2 h-4 w-4" />
+                      Verificar Status
+                    </>
+                  )}
+                </Button>
               </div>
               
-              <div className="grid grid-cols-2 gap-4 mb-6">
-                <div className="bg-[#333333] rounded-lg p-4 border border-playstore-separator">
-                  <h3 className="text-sm font-medium text-muted-foreground mb-1">Tempo em Revisão</h3>
-                  <div className="flex items-baseline">
-                    <span className="text-2xl font-semibold text-white">2</span>
-                    <span className="text-muted-foreground ml-1">dias</span>
-                    <span className="text-white mx-1">:</span>
-                    <span className="text-2xl font-semibold text-white">5</span>
-                    <span className="text-muted-foreground ml-1">horas</span>
+              <div className="bg-[#333333] rounded-lg p-6 border border-playstore-separator">
+                <h2 className="text-lg font-semibold text-white mb-4">Informações do Aplicativo</h2>
+                
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center border-b border-playstore-separator pb-2">
+                    <span className="text-muted-foreground">Status atual:</span>
+                    <span className="font-medium text-white">{statusAtual}</span>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1">Tempo médio: 3-7 dias</p>
+                  
+                  <div className="flex justify-between items-center border-b border-playstore-separator pb-2">
+                    <span className="text-muted-foreground">Track:</span>
+                    <span className="font-medium text-white">{appData.trackInfo}</span>
+                  </div>
+                  
+                  <div className="flex justify-between items-center border-b border-playstore-separator pb-2">
+                    <span className="text-muted-foreground">Versão:</span>
+                    <span className="font-medium text-white">{appData.version}</span>
+                  </div>
+                  
+                  <div className="flex justify-between items-center border-b border-playstore-separator pb-2">
+                    <span className="text-muted-foreground">Version Name:</span>
+                    <span className="font-medium text-white">{appData.versionName}</span>
+                  </div>
+                  
+                  <div className="flex justify-between items-center">
+                    <span className="text-muted-foreground">Última atualização:</span>
+                    <span className="font-medium text-white">{appData.lastUpdate}</span>
+                  </div>
                 </div>
-                
-                <div className="bg-[#333333] rounded-lg p-4 border border-playstore-separator">
-                  <h3 className="text-sm font-medium text-muted-foreground mb-1">Progresso Geral</h3>
-                  <div className="flex items-center justify-between">
-                    <span className="text-2xl font-semibold text-white">65%</span>
-                    <BarChart4 className="text-muted-foreground" size={28} />
-                  </div>
-                  <div className="mt-2">
-                    <Progress value={65} className="h-2" />
-                  </div>
-                </div>
-              </div>
-              
-              <div className="space-y-4">
-                <StatusCard 
-                  title="Verificação de Políticas" 
-                  icon={<FileText size={24} className="text-white" />}
-                  status="completed"
-                  description="A verificação das políticas do app foi concluída com sucesso." 
-                  progress={100}
-                />
-                
-                <StatusCard 
-                  title="Verificação de Conteúdo" 
-                  icon={<AlertCircle size={24} className="text-white" />}
-                  status="in-progress"
-                  description="A verificação de conteúdo está em andamento. Isso pode levar alguns dias." 
-                  progress={50}
-                />
-                
-                <StatusCard 
-                  title="Testes do Aplicativo" 
-                  icon={<Activity size={24} className="text-white" />}
-                  status="in-progress"
-                  description="Os testes estão sendo executados para verificar o comportamento do app." 
-                  progress={75}
-                />
-                
-                <StatusCard 
-                  title="Verificação Final" 
-                  icon={<CheckCircle size={24} className="text-white" />}
-                  status="pending"
-                  description="A verificação final ocorrerá após a conclusão de todas as etapas anteriores." 
-                  progress={0}
-                />
               </div>
             </div>
             
-            <div className="bg-[#2A2A2A] rounded-lg shadow-lg border border-playstore-separator p-6 animate-fade-in">
-              <h2 className="text-lg font-semibold mb-4 border-b border-playstore-separator pb-2">
-                Histórico de Feedback
+            <div className="mb-6">
+              <h2 className="text-lg font-semibold text-white mb-4 border-b border-playstore-separator pb-2">
+                Histórico de atualizações
               </h2>
               
-              <div className="space-y-3">
+              <div className="bg-[#333333] rounded-lg p-4 border border-playstore-separator h-64 overflow-y-auto">
                 {[
                   { date: '2023-05-22 15:32', text: 'Aplicativo enviado para revisão', type: 'info' },
                   { date: '2023-05-23 09:45', text: 'Iniciada verificação de políticas', type: 'info' },
@@ -258,10 +273,10 @@ const StatusRevisao = () => {
                   { date: '2023-05-23 14:25', text: 'Iniciada verificação de conteúdo', type: 'info' },
                   { date: '2023-05-24 10:15', text: 'Aviso: Certifique-se de que sua política de privacidade está atualizada', type: 'warning' }
                 ].map((item, index) => (
-                  <div key={index} className={`p-3 rounded-lg border ${
+                  <div key={index} className={`p-3 rounded-lg border mb-2 ${
                     item.type === 'success' ? 'bg-green-500/10 border-green-500/30 text-green-400' : 
                     item.type === 'warning' ? 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400' : 
-                    'bg-[#333333] border-playstore-separator text-muted-foreground'
+                    'bg-[#424242] border-playstore-separator text-muted-foreground'
                   }`}>
                     <div className="flex justify-between items-start">
                       <div className="flex items-start">
@@ -276,7 +291,45 @@ const StatusRevisao = () => {
                 ))}
               </div>
             </div>
-          </>
+            
+            <div className="flex flex-wrap gap-3 justify-center md:justify-start">
+              {!monitoring ? (
+                <Button 
+                  className="bg-[#0D6EFD] hover:bg-[#0D6EFD]/80 gap-2"
+                  onClick={handleStartMonitoring}
+                >
+                  <Play size={18} />
+                  Iniciar Monitoramento
+                </Button>
+              ) : (
+                <Button 
+                  className="bg-[#F44336] hover:bg-[#F44336]/80 gap-2"
+                  onClick={handleStopMonitoring}
+                >
+                  <Square size={18} />
+                  Parar Monitoramento
+                </Button>
+              )}
+              
+              <Button 
+                variant="outline" 
+                className="gap-2"
+                onClick={handleVerifyStatus}
+                disabled={refreshing}
+              >
+                <RotateCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+                Atualizar Agora
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                className="gap-2"
+              >
+                <ArrowUp size={18} />
+                Promover Versão
+              </Button>
+            </div>
+          </div>
         )}
       </div>
     </div>
