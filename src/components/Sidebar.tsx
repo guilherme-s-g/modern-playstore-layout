@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -13,7 +12,8 @@ import {
   CloudUpload,
   RefreshCw,
   Package,
-  Clipboard
+  Clipboard,
+  Code
 } from 'lucide-react';
 import { Switch } from "@/components/ui/switch";
 import { cn } from '@/lib/utils';
@@ -58,6 +58,13 @@ const Sidebar = ({
       icon: <Clipboard className="w-5 h-5" />,
       isRoute: true,
       path: '/status-revisao'
+    },
+    {
+      id: 'instrucoes-python',
+      label: 'Integração Python',
+      icon: <Code className="w-5 h-5" />,
+      isRoute: true,
+      path: '/instrucoes-python'
     },
     {
       id: 'history',

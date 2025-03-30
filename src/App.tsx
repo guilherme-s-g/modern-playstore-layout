@@ -9,6 +9,7 @@ import Index from "./pages/Index";
 import GerarAAB from "./pages/GerarAAB";
 import StatusRevisao from "./pages/StatusRevisao";
 import NotFound from "./pages/NotFound";
+import InstrucoesPython from "./pages/InstrucoesPython";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -32,6 +33,7 @@ const App = () => {
               <Route path="/" element={<Index />} />
               <Route path="/gerar-aab" element={<GerarAAB />} />
               <Route path="/status-revisao" element={<StatusRevisao />} />
+              <Route path="/instrucoes-python" element={<InstrucoesPython />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
