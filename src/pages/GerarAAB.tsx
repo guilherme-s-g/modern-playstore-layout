@@ -1,535 +1,459 @@
 
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { 
-  Package, 
-  ArrowLeft, 
-  FolderOpen, 
-  Key, 
-  Lock, 
-  Check, 
-  X,
-  FileText,
-  Loader2,
-  Sliders,
-  Code,
-  Terminal,
-  AlertTriangle,
-  GitBranch
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import FormField from '@/components/FormField';
 import { useToast } from '@/hooks/use-toast';
-import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Progress } from '@/components/ui/progress';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { Separator } from "@/components/ui/separator";
+import FileSelector from '@/components/FileSelector';
+import FormField from '@/components/FormField';
+import { useQuery } from '@tanstack/react-query';
+import { AlertTriangle, CheckCircle, Circle, Clock, FileText, XCircle } from 'lucide-react';
+
+const API_BASE_URL = 'http://localhost:8000/api';
+
+interface BuildStatus {
+  status: 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED';
+  progress: number;
+  logs: Array<{ timestamp: string; message: string }>;
+  error?: string;
+}
 
 const GerarAAB = () => {
-  const navigate = useNavigate();
   const { toast } = useToast();
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [useDefaultKeystore, setUseDefaultKeystore] = useState(false);
   const [activeTab, setActiveTab] = useState('basic');
-  const [buildProgress, setBuildProgress] = useState(0);
-  const [buildLogs, setBuildLogs] = useState<string[]>([]);
   
-  const [formState, setFormState] = useState({
-    // Basic options
-    project: '',
-    keystore: '',
-    keystorePassword: '',
-    keyAlias: '',
-    keyPassword: '',
-    outputDirectory: 'Diretório padrão do projeto',
-    
-    // Advanced options
-    minifyEnabled: true,
-    shrinkResources: true,
-    debuggable: false,
-    proguardEnabled: true,
-    bundleType: 'release',
-    flavor: '',
-    splitByDensity: true,
-    splitByAbi: true,
-    enableR8: true
+  // Form state
+  const [appName, setAppName] = useState('');
+  const [packageName, setPackageName] = useState('');
+  const [versionName, setVersionName] = useState('');
+  const [versionCode, setVersionCode] = useState('');
+  const [minSdk, setMinSdk] = useState('21');
+  const [targetSdk, setTargetSdk] = useState('33');
+  const [buildToolsVersion, setBuildToolsVersion] = useState('33.0.0');
+  const [keyAlias, setKeyAlias] = useState('');
+  const [keyPassword, setKeyPassword] = useState('');
+  const [storePassword, setStorePassword] = useState('');
+  const [apkFile, setApkFile] = useState<File | null>(null);
+  const [keyStoreFile, setKeyStoreFile] = useState<File | null>(null);
+  
+  // Build process state
+  const [currentBuildId, setCurrentBuildId] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Fetch build status if we have a build ID
+  const { data: buildStatus, refetch: refetchBuildStatus } = useQuery({
+    queryKey: ['buildStatus', currentBuildId],
+    queryFn: async () => {
+      if (!currentBuildId) return null;
+      const response = await fetch(`${API_BASE_URL}/build/${currentBuildId}`);
+      if (!response.ok) {
+        throw new Error('Erro ao buscar status do build');
+      }
+      return response.json() as Promise<BuildStatus>;
+    },
+    enabled: !!currentBuildId,
+    refetchInterval: currentBuildId ? 2000 : false,
   });
 
-  const handleChange = (field: string, value: string | boolean) => {
-    setFormState({
-      ...formState,
-      [field]: value
-    });
+  const handleApkSelect = (file: File) => {
+    setApkFile(file);
   };
 
-  const handleSelectProject = () => {
-    // Simular seleção de projeto
-    toast({
-      title: "Projeto selecionado",
-      description: "MeuApp-Android foi selecionado.",
-    });
-    handleChange('project', 'MeuApp-Android');
+  const handleKeyStoreSelect = (file: File) => {
+    setKeyStoreFile(file);
   };
 
-  const handleSelectKeystore = () => {
-    // Simular seleção de keystore
-    toast({
-      title: "Keystore selecionada",
-      description: "release-key.keystore foi selecionada.",
-    });
-    handleChange('keystore', 'release-key.keystore');
-  };
-
-  const handleSelectOutputDir = () => {
-    // Simular seleção de diretório
-    toast({
-      title: "Diretório selecionado",
-      description: "C:/Projetos/MeuApp/release foi selecionado.",
-    });
-    handleChange('outputDirectory', 'C:/Projetos/MeuApp/release');
-  };
-
-  const handleGenerateAAB = () => {
-    if (!formState.project) {
-      toast({
-        title: "Erro",
-        description: "Selecione um projeto Android primeiro.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (!useDefaultKeystore && !formState.keystore) {
-      toast({
-        title: "Erro",
-        description: "Selecione uma keystore ou use a keystore padrão.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setIsGenerating(true);
-    setBuildProgress(0);
-    setBuildLogs(["Iniciando processo de build..."]);
+  const handleGenerateAAB = async (e: React.FormEvent) => {
+    e.preventDefault();
     
-    // Simular processo de build com progresso
-    const interval = setInterval(() => {
-      setBuildProgress(prev => {
-        const newProgress = prev + Math.floor(Math.random() * 10);
-        
-        // Adicionar logs simulados
-        if (newProgress >= 20 && newProgress < 25) {
-          setBuildLogs(prev => [...prev, "Verificando configurações do projeto..."]);
-        } else if (newProgress >= 40 && newProgress < 45) {
-          setBuildLogs(prev => [...prev, "Compilando recursos e código-fonte..."]);
-        } else if (newProgress >= 60 && newProgress < 65) {
-          setBuildLogs(prev => [...prev, "Aplicando ProGuard e minificação..."]);
-        } else if (newProgress >= 80 && newProgress < 85) {
-          setBuildLogs(prev => [...prev, "Gerando arquivo AAB..."]);
-        } else if (newProgress >= 95) {
-          setBuildLogs(prev => [...prev, `AAB gerado com sucesso em ${formState.outputDirectory}`]);
-          clearInterval(interval);
-          setIsGenerating(false);
-          toast({
-            title: "AAB Gerado com Sucesso",
-            description: `O arquivo AAB foi gerado em ${formState.outputDirectory}`,
-            variant: "default",
-          });
-        }
-        
-        return newProgress >= 100 ? 100 : newProgress;
+    if (!apkFile || !keyStoreFile) {
+      toast({
+        title: "Arquivos Obrigatórios",
+        description: "Por favor, selecione o APK e o KeyStore.",
+        variant: "destructive"
       });
-    }, 300);
+      return;
+    }
+    
+    if (!appName || !packageName || !versionName || !versionCode || !keyAlias) {
+      toast({
+        title: "Campos Obrigatórios",
+        description: "Por favor, preencha todos os campos obrigatórios.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    try {
+      setIsSubmitting(true);
+      
+      const formData = new FormData();
+      formData.append('apkFile', apkFile);
+      formData.append('keyStoreFile', keyStoreFile);
+      
+      // Adicionar configuração como JSON
+      const config = {
+        appName,
+        packageName,
+        versionName,
+        versionCode: parseInt(versionCode, 10),
+        keyAlias,
+        keyPassword,
+        storePassword,
+        minSdk: parseInt(minSdk, 10),
+        targetSdk: parseInt(targetSdk, 10),
+        buildToolsVersion
+      };
+      
+      formData.append('config', JSON.stringify(config));
+      
+      const response = await fetch(`${API_BASE_URL}/generate-aab`, {
+        method: 'POST',
+        body: formData,
+      });
+      
+      if (!response.ok) {
+        throw new Error('Erro ao iniciar o processo de geração de AAB');
+      }
+      
+      const result = await response.json();
+      setCurrentBuildId(result.buildId);
+      setActiveTab('logs');
+      
+      toast({
+        title: "Processo Iniciado",
+        description: "A geração do AAB foi iniciada com sucesso.",
+      });
+    } catch (error) {
+      toast({
+        title: "Erro",
+        description: error instanceof Error ? error.message : "Erro desconhecido",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'PENDING':
+        return (
+          <div className="flex items-center text-yellow-500">
+            <Clock className="w-4 h-4 mr-1" />
+            <span>Pendente</span>
+          </div>
+        );
+      case 'PROCESSING':
+        return (
+          <div className="flex items-center text-blue-500">
+            <Circle className="w-4 h-4 mr-1 animate-pulse" />
+            <span>Processando</span>
+          </div>
+        );
+      case 'COMPLETED':
+        return (
+          <div className="flex items-center text-green-500">
+            <CheckCircle className="w-4 h-4 mr-1" />
+            <span>Concluído</span>
+          </div>
+        );
+      case 'FAILED':
+        return (
+          <div className="flex items-center text-red-500">
+            <XCircle className="w-4 h-4 mr-1" />
+            <span>Falhou</span>
+          </div>
+        );
+      default:
+        return (
+          <div className="flex items-center text-gray-500">
+            <Circle className="w-4 h-4 mr-1" />
+            <span>Desconhecido</span>
+          </div>
+        );
+    }
   };
 
   return (
-    <div className="min-h-screen bg-[#222222] p-6">
+    <div className="p-6 bg-[#222222] text-foreground min-h-screen">
       <div className="max-w-4xl mx-auto">
-        <div className="mb-6 flex items-center justify-between">
-          <div className="flex items-center">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={() => navigate('/')}
-              className="mr-2"
-            >
-              <ArrowLeft />
-            </Button>
-            <div>
-              <h1 className="text-2xl font-bold text-white flex items-center">
-                <Package className="mr-2" /> Gerar AAB
-              </h1>
-              <p className="text-muted-foreground text-sm">
-                Crie um arquivo Android App Bundle para publicação
-              </p>
+        <h1 className="text-2xl font-bold mb-2">Geração de AAB</h1>
+        <p className="text-muted-foreground mb-6">
+          Configure e gere arquivos Android App Bundle (AAB) para publicação na Google Play Store.
+        </p>
+        
+        <div className="bg-[#2A2A2A] border border-playstore-separator rounded-lg shadow-md overflow-hidden">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <div className="px-4 pt-4">
+              <TabsList className="grid grid-cols-3 mb-4">
+                <TabsTrigger value="basic">Básico</TabsTrigger>
+                <TabsTrigger value="advanced">Avançado</TabsTrigger>
+                <TabsTrigger value="logs">Logs</TabsTrigger>
+              </TabsList>
             </div>
-          </div>
-        </div>
-
-        <div className="bg-[#2A2A2A] rounded-lg shadow-lg border border-playstore-separator p-6 animate-fade-in">
-          <Tabs 
-            value={activeTab} 
-            onValueChange={setActiveTab}
-            className="space-y-6"
-          >
-            <TabsList className="grid grid-cols-3 gap-2 bg-[#333333] p-1">
-              <TabsTrigger value="basic" className="data-[state=active]:bg-playstore-blue data-[state=active]:text-white">
-                <FileText className="mr-2" size={16} />
-                Básico
-              </TabsTrigger>
-              <TabsTrigger value="advanced" className="data-[state=active]:bg-playstore-blue data-[state=active]:text-white">
-                <Sliders className="mr-2" size={16} />
-                Avançado
-              </TabsTrigger>
-              <TabsTrigger value="logs" className="data-[state=active]:bg-playstore-blue data-[state=active]:text-white">
-                <Terminal className="mr-2" size={16} />
-                Logs
-              </TabsTrigger>
-            </TabsList>
-
-            {/* Conteúdo da aba Básico */}
-            <TabsContent value="basic" className="space-y-8">
-              {/* Seção Projeto Android */}
-              <div className="space-y-4">
-                <h2 className="text-lg font-semibold text-foreground flex items-center border-b border-playstore-separator pb-2">
-                  <FileText className="mr-2" size={20} /> Projeto Android
-                </h2>
-                
-                <div className="flex items-center justify-between bg-[#333333] p-4 rounded-lg border border-playstore-separator">
-                  <div className="flex-1">
-                    <Button 
-                      onClick={handleSelectProject}
-                      className="bg-[#0D6EFD] hover:bg-[#0D6EFD]/90 text-white"
+            
+            <TabsContent value="basic" className="px-6 py-4">
+              <form onSubmit={handleGenerateAAB}>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <FormField 
+                      label="Nome do App"
+                      required
                     >
-                      <FolderOpen className="mr-2" size={16} />
-                      Selecionar Projeto
+                      <input
+                        type="text"
+                        value={appName}
+                        onChange={(e) => setAppName(e.target.value)}
+                        className="form-field"
+                        placeholder="Meu Aplicativo"
+                      />
+                    </FormField>
+                    
+                    <FormField 
+                      label="Package Name"
+                      hint="ex: com.empresa.app"
+                      required
+                    >
+                      <input
+                        type="text"
+                        value={packageName}
+                        onChange={(e) => setPackageName(e.target.value)}
+                        className="form-field"
+                        placeholder="com.exemplo.app"
+                      />
+                    </FormField>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <FormField 
+                      label="Version Name"
+                      hint="ex: 1.0.0"
+                      required
+                    >
+                      <input
+                        type="text"
+                        value={versionName}
+                        onChange={(e) => setVersionName(e.target.value)}
+                        className="form-field"
+                        placeholder="1.0.0"
+                      />
+                    </FormField>
+                    
+                    <FormField 
+                      label="Version Code"
+                      hint="ex: 1"
+                      required
+                    >
+                      <input
+                        type="number"
+                        value={versionCode}
+                        onChange={(e) => setVersionCode(e.target.value)}
+                        className="form-field"
+                        placeholder="1"
+                      />
+                    </FormField>
+                  </div>
+                  
+                  <Separator className="my-4" />
+                  
+                  <div className="space-y-4">
+                    <FileSelector
+                      label="APK File"
+                      placeholder="Selecione o arquivo APK"
+                      onSelect={handleApkSelect}
+                      selectedFile={apkFile}
+                      accept=".apk"
+                      required
+                    />
+                    
+                    <FileSelector
+                      label="KeyStore File"
+                      placeholder="Selecione o arquivo KeyStore"
+                      onSelect={handleKeyStoreSelect}
+                      selectedFile={keyStoreFile}
+                      accept=".jks,.keystore"
+                      required
+                    />
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      <FormField 
+                        label="Key Alias"
+                        required
+                      >
+                        <input
+                          type="text"
+                          value={keyAlias}
+                          onChange={(e) => setKeyAlias(e.target.value)}
+                          className="form-field"
+                        />
+                      </FormField>
+                      
+                      <FormField 
+                        label="Key Password"
+                      >
+                        <input
+                          type="password"
+                          value={keyPassword}
+                          onChange={(e) => setKeyPassword(e.target.value)}
+                          className="form-field"
+                        />
+                      </FormField>
+                      
+                      <FormField 
+                        label="Store Password"
+                      >
+                        <input
+                          type="password"
+                          value={storePassword}
+                          onChange={(e) => setStorePassword(e.target.value)}
+                          className="form-field"
+                        />
+                      </FormField>
+                    </div>
+                  </div>
+                  
+                  <div className="flex justify-end">
+                    <Button 
+                      type="submit" 
+                      className="bg-[#0D6EFD] hover:bg-[#0D6EFD]/80"
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? "Processando..." : "Gerar AAB"}
                     </Button>
-                    <p className="text-sm text-muted-foreground mt-2">
-                      {formState.project ? (
-                        <span className="flex items-center">
-                          <Check size={16} className="text-green-500 mr-1" /> 
-                          {formState.project}
-                        </span>
-                      ) : 'Nenhum projeto selecionado'}
-                    </p>
                   </div>
                 </div>
-              </div>
-
-              {/* Seção Keystore */}
+              </form>
+            </TabsContent>
+            
+            <TabsContent value="advanced" className="px-6 py-4">
               <div className="space-y-4">
-                <h2 className="text-lg font-semibold text-foreground flex items-center border-b border-playstore-separator pb-2">
-                  <Key className="mr-2" size={20} /> Configurações da Keystore
-                </h2>
-                
-                <div className="flex items-center space-x-2 mb-4">
-                  <Switch
-                    checked={useDefaultKeystore}
-                    onCheckedChange={setUseDefaultKeystore}
-                    className="data-[state=checked]:bg-[#0D6EFD]"
-                  />
-                  <span className="text-sm">Usar keystore padrão das configurações</span>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <FormField 
+                    label="Min SDK Version"
+                  >
+                    <input
+                      type="number"
+                      value={minSdk}
+                      onChange={(e) => setMinSdk(e.target.value)}
+                      className="form-field"
+                    />
+                  </FormField>
+                  
+                  <FormField 
+                    label="Target SDK Version"
+                  >
+                    <input
+                      type="number"
+                      value={targetSdk}
+                      onChange={(e) => setTargetSdk(e.target.value)}
+                      className="form-field"
+                    />
+                  </FormField>
+                  
+                  <FormField 
+                    label="Build Tools Version"
+                  >
+                    <input
+                      type="text"
+                      value={buildToolsVersion}
+                      onChange={(e) => setBuildToolsVersion(e.target.value)}
+                      className="form-field"
+                    />
+                  </FormField>
                 </div>
-
-                <div className={`space-y-5 ${useDefaultKeystore ? 'opacity-50 pointer-events-none' : ''}`}>
-                  <div className="flex items-center justify-between bg-[#333333] p-4 rounded-lg border border-playstore-separator">
-                    <div className="flex-1">
-                      <Button 
-                        onClick={handleSelectKeystore}
-                        className="bg-[#0D6EFD] hover:bg-[#0D6EFD]/90 text-white"
-                        disabled={useDefaultKeystore}
-                      >
-                        <Key className="mr-2" size={16} />
-                        Selecionar Keystore
-                      </Button>
-                      <p className="text-sm text-muted-foreground mt-2">
-                        {formState.keystore ? (
-                          <span className="flex items-center">
-                            <Check size={16} className="text-green-500 mr-1" /> 
-                            {formState.keystore}
-                          </span>
-                        ) : 'Nenhuma keystore selecionada'}
+                
+                <div className="bg-[#333333] rounded-md p-4 border border-playstore-separator">
+                  <div className="flex items-start space-x-2">
+                    <AlertTriangle className="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <h3 className="font-medium">Configurações Avançadas</h3>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Estas configurações afetam diretamente o processo de build. Altere apenas se souber o que está fazendo.
                       </p>
                     </div>
                   </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <FormField 
-                      label="Senha da Keystore" 
-                      hint="Senha para a keystore selecionada"
-                    >
-                      <div className="relative">
-                        <input 
-                          type="password" 
-                          className="form-field pr-10" 
-                          placeholder="Senha da Keystore"
-                          value={formState.keystorePassword}
-                          onChange={(e) => handleChange('keystorePassword', e.target.value)}
-                        />
-                        <Lock className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={16} />
-                      </div>
-                    </FormField>
-
-                    <FormField 
-                      label="Key Alias" 
-                      hint="Alias para a chave na keystore"
-                    >
-                      <input 
-                        type="text" 
-                        className="form-field" 
-                        placeholder="Key Alias"
-                        value={formState.keyAlias}
-                        onChange={(e) => handleChange('keyAlias', e.target.value)}
-                      />
-                    </FormField>
-
-                    <FormField 
-                      label="Senha do Alias" 
-                      hint="Senha para o alias da chave"
-                      className="md:col-span-2"
-                    >
-                      <div className="relative">
-                        <input 
-                          type="password" 
-                          className="form-field pr-10" 
-                          placeholder="Senha do Alias"
-                          value={formState.keyPassword}
-                          onChange={(e) => handleChange('keyPassword', e.target.value)}
-                        />
-                        <Lock className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={16} />
-                      </div>
-                    </FormField>
-                  </div>
-                </div>
-              </div>
-
-              {/* Seção Diretório de Destino */}
-              <div className="space-y-4">
-                <h2 className="text-lg font-semibold text-foreground flex items-center border-b border-playstore-separator pb-2">
-                  <FolderOpen className="mr-2" size={20} /> Diretório de Destino (Opcional)
-                </h2>
-                
-                <div className="flex items-center justify-between bg-[#333333] p-4 rounded-lg border border-playstore-separator">
-                  <div className="flex-1">
-                    <Button 
-                      onClick={handleSelectOutputDir}
-                      className="bg-[#0D6EFD] hover:bg-[#0D6EFD]/90 text-white"
-                    >
-                      <FolderOpen className="mr-2" size={16} />
-                      Selecionar Destino
-                    </Button>
-                    <p className="text-sm text-muted-foreground mt-2">
-                      {formState.outputDirectory}
-                    </p>
-                  </div>
                 </div>
               </div>
             </TabsContent>
-
-            {/* Conteúdo da aba Avançado */}
-            <TabsContent value="advanced" className="space-y-6">
-              <div className="bg-[#333333] p-5 rounded-lg border border-playstore-separator">
-                <h3 className="text-md font-medium mb-4 flex items-center">
-                  <Code className="mr-2" size={18} />
-                  Configurações de Build
-                </h3>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <div className="space-y-4">
-                    <FormField 
-                      label="Tipo de Build" 
-                      hint="Selecione o tipo de build para o AAB"
-                    >
-                      <select
-                        className="form-field bg-[#2A2A2A]"
-                        value={formState.bundleType}
-                        onChange={(e) => handleChange('bundleType', e.target.value)}
-                      >
-                        <option value="release">Release</option>
-                        <option value="debug">Debug</option>
-                        <option value="profile">Profile</option>
-                      </select>
-                    </FormField>
-
-                    <FormField 
-                      label="Flavor" 
-                      hint="Opcional: Selecione um product flavor específico"
-                    >
-                      <select
-                        className="form-field bg-[#2A2A2A]"
-                        value={formState.flavor}
-                        onChange={(e) => handleChange('flavor', e.target.value)}
-                      >
-                        <option value="">Nenhum (padrão)</option>
-                        <option value="free">Free</option>
-                        <option value="paid">Paid</option>
-                        <option value="demo">Demo</option>
-                      </select>
-                    </FormField>
-                  </div>
-
-                  <div className="space-y-4">
-                    <div className="flex flex-col space-y-3">
-                      <label className="text-sm font-medium flex items-center">
-                        <GitBranch className="w-4 h-4 mr-2" />
-                        Opções de Divisão de APKs
-                      </label>
-
-                      <div className="flex items-center space-x-2">
-                        <Switch
-                          checked={formState.splitByDensity}
-                          onCheckedChange={(checked) => handleChange('splitByDensity', checked)}
-                          className="data-[state=checked]:bg-[#0D6EFD]"
-                        />
-                        <span className="text-sm">Dividir por densidade de tela</span>
-                      </div>
-
-                      <div className="flex items-center space-x-2">
-                        <Switch
-                          checked={formState.splitByAbi}
-                          onCheckedChange={(checked) => handleChange('splitByAbi', checked)}
-                          className="data-[state=checked]:bg-[#0D6EFD]"
-                        />
-                        <span className="text-sm">Dividir por arquitetura (ABI)</span>
+            
+            <TabsContent value="logs" className="px-6 py-4">
+              {currentBuildId ? (
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <h3 className="font-medium">Status do Build</h3>
+                      <div className="text-sm text-muted-foreground mt-1">
+                        ID: <span className="font-mono">{currentBuildId}</span>
                       </div>
                     </div>
+                    {buildStatus && getStatusBadge(buildStatus.status)}
                   </div>
-                </div>
-              </div>
-
-              <div className="bg-[#333333] p-5 rounded-lg border border-playstore-separator">
-                <h3 className="text-md font-medium mb-4 flex items-center">
-                  <Sliders className="mr-2" size={18} />
-                  Otimizações
-                </h3>
-
-                <div className="space-y-3">
-                  <div className="flex items-center space-x-2">
-                    <Switch
-                      checked={formState.minifyEnabled}
-                      onCheckedChange={(checked) => handleChange('minifyEnabled', checked)}
-                      className="data-[state=checked]:bg-[#0D6EFD]"
-                    />
-                    <span className="text-sm">Habilitar minificação de código</span>
-                  </div>
-
-                  <div className="flex items-center space-x-2">
-                    <Switch
-                      checked={formState.shrinkResources}
-                      onCheckedChange={(checked) => handleChange('shrinkResources', checked)}
-                      className="data-[state=checked]:bg-[#0D6EFD]"
-                    />
-                    <span className="text-sm">Reduzir recursos não utilizados</span>
-                  </div>
-
-                  <div className="flex items-center space-x-2">
-                    <Switch
-                      checked={formState.proguardEnabled}
-                      onCheckedChange={(checked) => handleChange('proguardEnabled', checked)}
-                      className="data-[state=checked]:bg-[#0D6EFD]"
-                    />
-                    <span className="text-sm">Habilitar ProGuard</span>
-                  </div>
-
-                  <div className="flex items-center space-x-2">
-                    <Switch
-                      checked={formState.enableR8}
-                      onCheckedChange={(checked) => handleChange('enableR8', checked)}
-                      className="data-[state=checked]:bg-[#0D6EFD]"
-                    />
-                    <span className="text-sm">Usar compilador R8</span>
-                  </div>
-
-                  <div className="flex items-center space-x-2">
-                    <Switch
-                      checked={formState.debuggable}
-                      onCheckedChange={(checked) => handleChange('debuggable', checked)}
-                      className="data-[state=checked]:bg-[#0D6EFD]"
-                    />
-                    <span className="text-sm">Permitir debug</span>
-                  </div>
-                </div>
-
-                {formState.debuggable && (
-                  <div className="mt-3 p-3 bg-amber-900/20 border border-amber-500/30 rounded-md flex items-start">
-                    <AlertTriangle className="text-amber-500 mr-2 mt-0.5 flex-shrink-0" size={16} />
-                    <p className="text-xs text-amber-400">
-                      Permitir debug em builds de produção pode expor informações sensíveis. 
-                      Apenas habilite esta opção para testes.
-                    </p>
-                  </div>
-                )}
-              </div>
-            </TabsContent>
-
-            {/* Conteúdo da aba Logs */}
-            <TabsContent value="logs" className="space-y-6">
-              <div className="bg-[#1A1A1A] rounded-lg border border-playstore-separator p-4">
-                <h3 className="text-md font-medium mb-4 flex items-center">
-                  <Terminal className="mr-2" size={18} />
-                  Logs de Build
-                </h3>
-
-                <ScrollArea className="h-[250px] font-mono text-sm">
-                  {buildLogs.length > 0 ? (
-                    <div className="space-y-1">
-                      {buildLogs.map((log, index) => (
-                        <div key={index} className="flex">
-                          <span className="text-gray-500 mr-2">{`[${index + 1}]`}</span>
-                          <span>{log}</span>
-                        </div>
-                      ))}
-                      {isGenerating && (
-                        <div className="flex items-center mt-2">
-                          <Loader2 className="animate-spin mr-2" size={16} />
-                          <span>Processando...</span>
-                        </div>
-                      )}
+                  
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm">Progresso</span>
+                      <span className="text-sm">{buildStatus?.progress || 0}%</span>
                     </div>
-                  ) : (
-                    <div className="text-center py-8 text-muted-foreground">
-                      Nenhum log disponível. Inicie a geração do AAB para ver logs.
+                    <Progress value={buildStatus?.progress || 0} className="h-2" />
+                  </div>
+                  
+                  <div className="bg-[#333333] border border-playstore-separator rounded-md p-4 h-64 overflow-y-auto font-mono text-sm">
+                    {buildStatus?.logs?.map((log, index) => (
+                      <div key={index} className="py-1">
+                        <span className="text-muted-foreground">
+                          {new Date(log.timestamp).toLocaleTimeString()}
+                        </span>
+                        <span className="ml-2">{log.message}</span>
+                      </div>
+                    ))}
+                    
+                    {buildStatus?.status === 'FAILED' && (
+                      <div className="py-1 text-red-500">
+                        <span className="text-muted-foreground">
+                          {new Date().toLocaleTimeString()}
+                        </span>
+                        <span className="ml-2">Erro: {buildStatus.error}</span>
+                      </div>
+                    )}
+                    
+                    {!buildStatus?.logs?.length && (
+                      <div className="flex items-center justify-center h-full text-muted-foreground">
+                        <FileText className="w-5 h-5 mr-2" />
+                        Aguardando logs...
+                      </div>
+                    )}
+                  </div>
+                  
+                  {buildStatus?.status === 'COMPLETED' && (
+                    <div className="bg-green-500/20 border border-green-500/30 rounded-md p-4">
+                      <div className="flex items-start space-x-2">
+                        <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                        <div>
+                          <h3 className="font-medium text-green-500">Build Concluído!</h3>
+                          <p className="text-sm mt-1">
+                            O arquivo AAB foi gerado com sucesso. Você pode baixá-lo agora.
+                          </p>
+                          <Button className="mt-2 bg-green-600 hover:bg-green-700">
+                            Baixar AAB
+                          </Button>
+                        </div>
+                      </div>
                     </div>
                   )}
-                </ScrollArea>
-
-                {isGenerating && (
-                  <div className="mt-4">
-                    <label className="text-sm mb-1 block">Progresso:</label>
-                    <div className="space-y-2">
-                      <Progress value={buildProgress} className="h-2" />
-                      <div className="flex justify-between text-xs text-muted-foreground">
-                        <span>0%</span>
-                        <span>{buildProgress}%</span>
-                        <span>100%</span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-8">
+                  <FileText className="w-12 h-12 text-muted-foreground mb-4" />
+                  <h3 className="font-medium text-lg">Nenhum build iniciado</h3>
+                  <p className="text-muted-foreground text-center max-w-md mt-2">
+                    Configure os parâmetros na aba "Básico" e inicie o processo de geração de AAB para visualizar os logs aqui.
+                  </p>
+                </div>
+              )}
             </TabsContent>
           </Tabs>
-
-          {/* Botão de Geração */}
-          <div className="pt-6 flex justify-center border-t border-playstore-separator mt-6">
-            <Button 
-              className="bg-[#0D6EFD] hover:bg-[#0D6EFD]/90 text-white min-w-[200px] h-12"
-              onClick={handleGenerateAAB}
-              disabled={isGenerating}
-            >
-              {isGenerating ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Gerando AAB...
-                </>
-              ) : (
-                <>
-                  <Package className="mr-2" size={18} />
-                  Gerar AAB
-                </>
-              )}
-            </Button>
-          </div>
         </div>
       </div>
     </div>
