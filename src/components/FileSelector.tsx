@@ -42,7 +42,7 @@ const FileSelector = ({
       <div className="flex items-center gap-2">
         <input
           type="text"
-          className="form-field flex-1"
+          className="customtk-input flex-1"
           placeholder={placeholder}
           value={selectedFile ? selectedFile.name : ''}
           readOnly
@@ -50,7 +50,7 @@ const FileSelector = ({
         <button
           type="button"
           onClick={handleClick}
-          className="file-select-button"
+          className="customtk-button"
         >
           <Upload className="w-4 h-4 mr-2 inline-block" />
           Selecionar

@@ -80,7 +80,7 @@ const Index = () => {
   };
   
   return (
-    <div className="flex h-screen overflow-hidden bg-[#222222]">
+    <div className="flex h-screen overflow-hidden bg-[#1E1E2E]">
       <Sidebar 
         activeSection={activeSection}
         onSectionChange={handleSectionChange}
@@ -107,7 +107,7 @@ const Index = () => {
         </header>
         
         {(activeSection === 'new-app' || ['basic-info', 'files-credentials', 'images', 'release-config'].includes(activeSection)) && (
-          <div className="bg-[#2A2A2A] rounded-lg shadow-lg border border-playstore-separator animate-fade-in">
+          <div className="customtk-card animate-fade-in">
             <div className="px-4 pt-4">
               <TabNavigation 
                 tabs={tabs} 
@@ -128,19 +128,19 @@ const Index = () => {
         {activeSection === 'dashboard' && (
           <div className="animate-fade-in">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-              <div className="bg-gradient-to-br from-[#1A3B6E] to-[#0D6EFD] rounded-xl shadow-lg p-6 border border-[#2A447F] transition-transform hover:scale-[1.02]">
+              <div className="bg-gradient-to-br from-[#003B7A] to-[#0D6EFD] rounded-xl shadow-lg p-6 border border-[#2A447F] transition-transform hover:scale-[1.02]">
                 <div className="flex justify-between items-start">
                   <div>
                     <h2 className="text-xl font-semibold text-white mb-2">Atualização de Aplicativo</h2>
                     <p className="text-white/80 mb-6">Faça o upload de novas versões do seu app para a Google Play Store</p>
-                    <Button 
-                      className="bg-white/90 text-[#0D6EFD] hover:bg-white flex items-center gap-2 font-medium"
+                    <button 
+                      className="customtk-button bg-white/90 text-[#0D6EFD] hover:bg-white flex items-center gap-2 font-medium"
                       onClick={() => handleSectionChange('new-app')}
                     >
                       <FileUp size={18} />
                       Iniciar Atualização
                       <ArrowRight size={16} className="ml-1"/>
-                    </Button>
+                    </button>
                   </div>
                   <div className="bg-white/20 p-3 rounded-lg">
                     <UploadCloud className="w-10 h-10 text-white" />
@@ -148,19 +148,19 @@ const Index = () => {
                 </div>
               </div>
               
-              <div className="bg-gradient-to-br from-[#1D4938] to-[#2E7D32] rounded-xl shadow-lg p-6 border border-[#2A594F] transition-transform hover:scale-[1.02]">
+              <div className="bg-gradient-to-br from-[#103824] to-[#2E7D32] rounded-xl shadow-lg p-6 border border-[#2A594F] transition-transform hover:scale-[1.02]">
                 <div className="flex justify-between items-start">
                   <div>
                     <h2 className="text-xl font-semibold text-white mb-2">Gerar AAB</h2>
                     <p className="text-white/80 mb-6">Crie pacotes Android App Bundle para seu aplicativo</p>
-                    <Button 
-                      className="bg-white/90 text-[#2E7D32] hover:bg-white flex items-center gap-2 font-medium"
+                    <button 
+                      className="customtk-button bg-white/90 text-[#2E7D32] hover:bg-white flex items-center gap-2 font-medium"
                       onClick={() => handleNavigate('/gerar-aab')}
                     >
                       <Package size={18} />
                       Gerar AAB
                       <ArrowRight size={16} className="ml-1"/>
-                    </Button>
+                    </button>
                   </div>
                   <div className="bg-white/20 p-3 rounded-lg">
                     <Package className="w-10 h-10 text-white" />
@@ -175,14 +175,14 @@ const Index = () => {
                   <div>
                     <h2 className="text-xl font-semibold text-white mb-2">Status da Revisão</h2>
                     <p className="text-white/80 mb-6">Acompanhe o progresso da revisão do seu aplicativo</p>
-                    <Button 
-                      className="bg-white/90 text-[#FFA000] hover:bg-white flex items-center gap-2 font-medium"
+                    <button 
+                      className="customtk-button bg-white/90 text-[#FFA000] hover:bg-white flex items-center gap-2 font-medium"
                       onClick={() => handleNavigate('/status-revisao')}
                     >
                       <Clipboard size={18} />
                       Ver Status
                       <ArrowRight size={16} className="ml-1"/>
-                    </Button>
+                    </button>
                   </div>
                   <div className="bg-white/20 p-3 rounded-lg">
                     <Clipboard className="w-10 h-10 text-white" />
@@ -190,19 +190,19 @@ const Index = () => {
                 </div>
               </div>
               
-              <div className="bg-gradient-to-br from-[#493657] to-[#7B1FA2] rounded-xl shadow-lg p-6 border border-[#5A4768] transition-transform hover:scale-[1.02]">
+              <div className="bg-gradient-to-br from-[#3D284C] to-[#7B1FA2] rounded-xl shadow-lg p-6 border border-[#5A4768] transition-transform hover:scale-[1.02]">
                 <div className="flex justify-between items-start">
                   <div>
                     <h2 className="text-xl font-semibold text-white mb-2">Configurações</h2>
                     <p className="text-white/80 mb-6">Personalize as configurações do sistema</p>
-                    <Button 
-                      className="bg-white/90 text-[#7B1FA2] hover:bg-white flex items-center gap-2 font-medium"
+                    <button 
+                      className="customtk-button bg-white/90 text-[#7B1FA2] hover:bg-white flex items-center gap-2 font-medium"
                       onClick={() => handleSectionChange('settings')}
                     >
                       <Settings size={18} />
                       Configurar
                       <ArrowRight size={16} className="ml-1"/>
-                    </Button>
+                    </button>
                   </div>
                   <div className="bg-white/20 p-3 rounded-lg">
                     <Settings className="w-10 h-10 text-white" />
@@ -211,7 +211,7 @@ const Index = () => {
               </div>
             </div>
             
-            <div className="mt-8 bg-[#2A2A2A] rounded-lg p-6 border border-playstore-separator">
+            <div className="mt-8 customtk-card p-6">
               <h2 className="text-lg font-medium text-foreground mb-4">Publicações Recentes</h2>
               <div className="space-y-3">
                 {[
@@ -219,39 +219,39 @@ const Index = () => {
                   { app: 'Meu App', version: '2.0.5', date: '15/04/2023', status: 'Publicado' },
                   { app: 'App Secundário', version: '1.3.2', date: '02/03/2023', status: 'Publicado' }
                 ].map((item, index) => (
-                  <div key={index} className="flex items-center justify-between bg-[#333333] p-3 rounded-lg">
+                  <div key={index} className="flex items-center justify-between bg-[#292936] p-3 rounded-lg">
                     <div>
                       <p className="text-sm font-medium text-foreground">{item.app} <span className="text-muted-foreground">v{item.version}</span></p>
                       <p className="text-xs text-muted-foreground">Publicado em {item.date}</p>
                     </div>
                     <div className="flex items-center">
                       <span className="bg-green-500/20 text-green-400 text-xs px-2 py-0.5 rounded-full">{item.status}</span>
-                      <Button variant="ghost" size="sm" className="ml-2">
+                      <button className="customtk-button-secondary ml-2 p-1">
                         <ArrowUpRight size={14} />
-                      </Button>
+                      </button>
                     </div>
                   </div>
                 ))}
               </div>
-              <Button variant="outline" className="mt-4 w-full text-muted-foreground">
+              <button className="customtk-button-secondary mt-4 w-full text-muted-foreground">
                 Ver histórico completo
-              </Button>
+              </button>
             </div>
           </div>
         )}
         
         {activeSection === 'history' && (
-          <div className="bg-[#2A2A2A] rounded-lg shadow-lg border border-playstore-separator p-6 animate-fade-in">
+          <div className="customtk-card p-6 animate-fade-in">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-lg font-semibold">Histórico de Publicações</h2>
               <div className="flex space-x-2">
-                <Button variant="outline" size="sm">Filtrar</Button>
-                <Button variant="outline" size="sm">Exportar</Button>
+                <button className="customtk-button-secondary">Filtrar</button>
+                <button className="customtk-button-secondary">Exportar</button>
               </div>
             </div>
             <div className="space-y-4">
               {Array.from({ length: 5 }).map((_, index) => (
-                <div key={index} className="bg-[#333333] p-4 rounded-lg border border-playstore-separator">
+                <div key={index} className="bg-[#292936] p-4 rounded-lg border border-customtk-separator">
                   <div className="flex justify-between items-start">
                     <div>
                       <div className="flex items-center">
@@ -275,7 +275,7 @@ const Index = () => {
                         </div>
                       </div>
                     </div>
-                    <Button variant="outline" size="sm">Detalhes</Button>
+                    <button className="customtk-button-secondary">Detalhes</button>
                   </div>
                 </div>
               ))}
@@ -284,62 +284,60 @@ const Index = () => {
         )}
         
         {activeSection === 'settings' && (
-          <div className="bg-[#2A2A2A] rounded-lg shadow-lg border border-playstore-separator p-6 animate-fade-in">
+          <div className="customtk-card p-6 animate-fade-in">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
-                <h2 className="text-lg font-semibold border-b border-playstore-separator pb-2">Configurações da Conta</h2>
+                <h2 className="text-lg font-semibold border-b border-customtk-separator pb-2">Configurações da Conta</h2>
                 <div>
                   <label className="block text-sm font-medium mb-1">Credenciais da Google Play Console</label>
-                  <Button variant="outline" className="w-full justify-start text-left">
+                  <button className="customtk-button-secondary w-full justify-start text-left">
                     Configurar credenciais
-                  </Button>
+                  </button>
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">Diretório de trabalho padrão</label>
-                  <Button variant="outline" className="w-full justify-start text-left">
+                  <button className="customtk-button-secondary w-full justify-start text-left">
                     Selecionar diretório
-                  </Button>
+                  </button>
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">Tema da interface</label>
                   <div className="flex items-center space-x-2">
-                    <Button 
-                      variant={darkMode ? "default" : "outline"} 
-                      size="sm"
+                    <button 
+                      className={`${darkMode ? "customtk-button" : "customtk-button-secondary"}`} 
                       onClick={() => setDarkMode(true)}
                     >
                       Escuro
-                    </Button>
-                    <Button 
-                      variant={!darkMode ? "default" : "outline"} 
-                      size="sm"
+                    </button>
+                    <button 
+                      className={`${!darkMode ? "customtk-button" : "customtk-button-secondary"}`} 
                       onClick={() => setDarkMode(false)}
                     >
                       Claro
-                    </Button>
+                    </button>
                   </div>
                 </div>
               </div>
               
               <div className="space-y-4">
-                <h2 className="text-lg font-semibold border-b border-playstore-separator pb-2">Configurações Avançadas</h2>
+                <h2 className="text-lg font-semibold border-b border-customtk-separator pb-2">Configurações Avançadas</h2>
                 <div>
                   <label className="block text-sm font-medium mb-1">Ferramentas de build</label>
-                  <Button variant="outline" className="w-full justify-start text-left">
+                  <button className="customtk-button-secondary w-full justify-start text-left">
                     Configurar ferramentas
-                  </Button>
+                  </button>
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">Caminho do SDK Android</label>
-                  <Button variant="outline" className="w-full justify-start text-left">
+                  <button className="customtk-button-secondary w-full justify-start text-left">
                     Selecionar SDK
-                  </Button>
+                  </button>
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">Logs do sistema</label>
-                  <Button variant="outline" className="w-full justify-start text-left">
+                  <button className="customtk-button-secondary w-full justify-start text-left">
                     Ver logs
-                  </Button>
+                  </button>
                 </div>
               </div>
             </div>
