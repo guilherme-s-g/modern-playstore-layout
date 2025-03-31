@@ -8,8 +8,6 @@ import { StrictMode } from "react";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import InstrucoesPython from "./pages/InstrucoesPython";
-import GerarAAB from "./pages/GerarAAB";
-import StatusRevisao from "./pages/StatusRevisao";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -32,8 +30,6 @@ const App = () => {
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/instrucoes-python" element={<InstrucoesPython />} />
-              <Route path="/gerar-aab" element={<GerarAAB />} />
-              <Route path="/status-revisao" element={<StatusRevisao />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

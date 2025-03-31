@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import Sidebar from '@/components/Sidebar';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Package, Download, RefreshCw } from 'lucide-react';
+import { ArrowRight, Package, Download, RefreshCw, CheckCircle } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Progress } from '@/components/ui/progress';
 import { useToast } from "@/components/ui/use-toast";
@@ -33,7 +33,7 @@ const GerarAAB = () => {
           toast({
             title: "AAB gerado com sucesso!",
             description: "Seu arquivo AAB está pronto para download.",
-            variant: "success",
+            variant: "default",
           });
           
           return 100;

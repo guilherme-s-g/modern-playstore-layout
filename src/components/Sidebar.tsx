@@ -49,16 +49,12 @@ const Sidebar = ({
     {
       id: 'gerar-aab',
       label: 'Gerar AAB',
-      icon: <Package className="w-5 h-5" />,
-      isRoute: true,
-      path: '/gerar-aab'
+      icon: <Package className="w-5 h-5" />
     },
     {
       id: 'status-revisao',
       label: 'Status de Revisão',
-      icon: <Clipboard className="w-5 h-5" />,
-      isRoute: true,
-      path: '/status-revisao'
+      icon: <Clipboard className="w-5 h-5" />
     },
     {
       id: 'instrucoes-python',

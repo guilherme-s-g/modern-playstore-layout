@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
@@ -16,7 +17,13 @@ import {
   XCircle,
   Clock,
   AlertTriangle,
-  RefreshCw
+  RefreshCw,
+  Download,
+  Home,
+  History,
+  Upload,
+  Code,
+  ClipboardList
 } from 'lucide-react';
 import Sidebar from '@/components/Sidebar';
 import BasicInfoForm from '@/components/BasicInfoForm';
