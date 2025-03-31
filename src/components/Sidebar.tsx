@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -49,12 +48,16 @@ const Sidebar = ({
     {
       id: 'gerar-aab',
       label: 'Gerar AAB',
-      icon: <Package className="w-5 h-5" />
+      icon: <Package className="w-5 h-5" />,
+      isRoute: true,
+      path: '/gerar-aab'
     },
     {
       id: 'status-revisao',
       label: 'Status de Revisão',
-      icon: <Clipboard className="w-5 h-5" />
+      icon: <Clipboard className="w-5 h-5" />,
+      isRoute: true,
+      path: '/status-revisao'
     },
     {
       id: 'instrucoes-python',
@@ -107,8 +110,8 @@ const Sidebar = ({
   };
   
   return (
-    <div className="bg-[#1E1E2E] text-sidebar-foreground w-64 h-screen flex flex-col shadow-lg">
-      <div className="p-5 border-b border-customtk-separator">
+    <div className="bg-[#222222] text-sidebar-foreground w-64 h-screen flex flex-col shadow-lg">
+      <div className="p-5 border-b border-playstore-separator">
         <h1 className="text-xl font-bold text-center text-white">Automação Play Store</h1>
       </div>
       
@@ -119,12 +122,12 @@ const Sidebar = ({
               key={item.id}
               onClick={() => handleItemClick(item)}
               className={cn(
-                "customtk-sidebar-item",
+                "w-full p-3 rounded-md flex items-center space-x-3 transition-all duration-200",
                 (activeSection === item.id || 
                  (item.id === 'new-app' && ['basic-info', 'files-credentials', 'images', 'release-config'].includes(activeSection)) ||
                  (item.path === window.location.pathname))
-                  ? "active" 
-                  : ""
+                  ? "bg-[#0D6EFD] text-white font-medium" 
+                  : "bg-[#2A2A2A]/80 hover:bg-[#0D6EFD]/90 text-white/90"
               )}
             >
               {item.icon}
@@ -136,15 +139,17 @@ const Sidebar = ({
         {(activeSection === 'new-app' || activeSection === 'basic-info' || 
          activeSection === 'files-credentials' || activeSection === 'images' || 
          activeSection === 'release-config') && (
-          <div className="mt-5 space-y-2 border-t border-customtk-separator pt-5">
-            <p className="text-xs text-white/60 uppercase font-semibold px-3 mb-2">Etapas da Atualização</p>
+          <div className="mt-5 space-y-2 border-t border-playstore-separator pt-5">
+            <p className="text-xs text-white/50 uppercase font-semibold px-3 mb-2">Etapas da Atualização</p>
             {newAppSections.map((item) => (
               <button
                 key={item.id}
                 onClick={() => onSectionChange(item.id)}
                 className={cn(
-                  "customtk-sidebar-item pl-4",
-                  activeSection === item.id ? "active" : ""
+                  "w-full p-2.5 rounded-md flex items-center space-x-3 transition-all duration-200 pl-4",
+                  activeSection === item.id 
+                    ? "bg-[#0D6EFD] text-white font-medium" 
+                    : "bg-[#2A2A2A]/80 hover:bg-[#0D6EFD]/90 text-white/90"
                 )}
               >
                 {item.icon}
@@ -155,7 +160,7 @@ const Sidebar = ({
         )}
       </div>
       
-      <div className="p-4 space-y-4 border-t border-customtk-separator">
+      <div className="p-4 space-y-4 border-t border-playstore-separator">
         {/* Tema escuro toggle */}
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
@@ -165,7 +170,7 @@ const Sidebar = ({
           <Switch 
             checked={darkMode} 
             onCheckedChange={onToggleDarkMode} 
-            className="data-[state=checked]:bg-customtk-blue"
+            className="data-[state=checked]:bg-[#0D6EFD]"
           />
         </div>
 
@@ -178,7 +183,7 @@ const Sidebar = ({
           <Switch 
             checked={updateMode} 
             onCheckedChange={() => setUpdateMode(!updateMode)} 
-            className="data-[state=checked]:bg-customtk-blue"
+            className="data-[state=checked]:bg-[#0D6EFD]"
           />
         </div>
       </div>
