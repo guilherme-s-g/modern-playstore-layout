@@ -63,6 +63,16 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
+				// Add CustomTkinter specific colors
+				customtk: {
+					dark: 'hsl(var(--customtk-dark))',
+					darker: 'hsl(var(--customtk-darker))',
+					field: 'hsl(var(--customtk-field))',
+					blue: 'hsl(var(--customtk-blue))',
+					separator: 'hsl(var(--customtk-separator))',
+					hover: 'hsl(var(--customtk-hover))',
+					pressed: 'hsl(var(--customtk-pressed))'
+				},
 				playstore: {
 					'dark': '#1E1E1E',
 					'darker': '#252526',
